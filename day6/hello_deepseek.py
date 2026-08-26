@@ -1,3 +1,4 @@
+# Day6 作业：DeepSeek API 调用练习（命令行对话雏形）
 import os
 import requests
 
