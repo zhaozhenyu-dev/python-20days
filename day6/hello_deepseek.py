@@ -1,17 +1,14 @@
 import os
 import requests
 
-# ---------- 第 1 步：从环境变量读 key ----------
 key = os.environ.get("DEEPSEEK_API_KEY")
 if key is None:
     print("没找到 Key！先在终端执行: source ~/.zshrc")
     exit()
 
-# ---------- 第 2 步：准备会话（绕开系统代理） ----------
 s = requests.Session()
 s.trust_env = False
 
-# ---------- 第 3 步：发请求 + 异常处理 ----------
 try:
     resp = s.post(
         "https://api.deepseek.com/chat/completions",
@@ -24,12 +21,11 @@ try:
         },
         timeout=30,
     )
-    resp.raise_for_status()          # 状态码不是 2xx 就主动抛异常
+    resp.raise_for_status()         
 
-    data = resp.json()               # 拆包裹：JSON 文本 → 字典
-    answer = data["choices"][0]["message"]["content"]   # 剥洋葱取答案
+    data = resp.json()               
+    answer = data["choices"][0]["message"]["content"]   
 
-    # ---------- 第 4 步：打印结果 ----------
     print("状态码:", resp.status_code)
     print("模型:", data["model"])
     print("本次消耗 token:", data["usage"]["total_tokens"])
