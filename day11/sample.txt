@@ -1,0 +1,9 @@
+周报助手使用说明：AI 周报助手的作用是把你零散的工作流水，自动整理成结构化的三段式周报。三段分别是"本周完成"、"下周计划"、"问题与风险"。你只需要把每天做了什么按行粘贴进去，点生成，模型就会输出规范周报。temperature 设为 0.3 让输出稳定，不要太高以免周报内容发散。
+
+DeepSeek API 调用方法：调用 DeepSeek 要在代码里用 requests.post 发送 HTTPS 请求到 https://api.deepseek.com/chat/completions。请求体里的 messages 是一个列表，第一条是 system 角色设定助手身份，第二条是 user 角色放用户问题。模型名填 deepseek-chat。API Key 通过 os.getenv("DEEPSEEK_API_KEY") 读取，绝不写死在代码里。返回结果用 resp.json() 剥洋葱取到 choices 第 0 个的 message 的 content。
+
+Streamlit 部署步骤：把周报助手部署到 Streamlit Cloud，先写 requirements.txt 列出 streamlit 和 requests 两个依赖，告诉云端服务器装什么。然后在平台填 Main file path 为 day9/app.py，并在 Advanced settings 的 Secrets 里填 DEEPSEEK_API_KEY 等于你的真实 key。部署成功后平台给一个 https 开头的网址，任何人都能打开使用。
+
+pytest 单元测试写法：给周报生成函数写测试要用 unittest.mock 里的 patch 把 requests.post 换成假替身，这样测试不真联网也不花钱。测试函数名必须以 test_ 开头，pytest 才会自动发现。用 assert 写断言，比如断言返回结果是字符串、断言周报包含"本周完成"。跑 pytest 显示 3 passed 就是全绿。
+
+Git 分支工作流：开发新功能先 git switch -c 开一个 feature 分支，在里面提交代码，再 git push 推到 GitHub，最后提 Pull Request 合并回 main。分支的作用是隔离实验，改坏了不影响主线。main 分支要保持始终能跑、能演示的状态。
